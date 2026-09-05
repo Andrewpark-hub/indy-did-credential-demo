@@ -1,4 +1,4 @@
-# 🔗 Hyperledger Indy 기반 자기주권신원(SSI) DID/VC/VP 자격증명 시스템
+# Hyperledger Indy 기반 자기주권신원(SSI) DID/VC/VP 자격증명 시스템
 
 ![Python](https://img.shields.io/badge/Python-3.6%2B-blue?style=flat-square&logo=python)
 ![Hyperledger Indy](https://img.shields.io/badge/Hyperledger-Indy-orange?style=flat-square)
@@ -9,7 +9,7 @@ Hyperledger Indy 블록체인 네트워크(`von-network`)를 활용하여 **자�
 
 ---
 
-## 📌 프로젝트 핵심 요소
+## 프로젝트 핵심 요소
 
 1. **온체인 신뢰 앵커(Trust Anchor) 등록 및 트랜잭션 검증**
    - 네트워크 최고 관리자(Steward) 권한을 활용하여 Issuer(발급자) DID를 원장에 등록
@@ -23,7 +23,7 @@ Hyperledger Indy 블록체인 네트워크(`von-network`)를 활용하여 **자�
 
 ---
 
-## 🔄 시스템 아키텍처 & 라이프사이클 흐름
+##  시스템 아키텍처 & 라이프사이클 흐름
 
 ```mermaid
 sequenceDiagram
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ---
 
-## 🛠️ 기술 스택 (Tech Stack)
+##  기술 스택 (Tech Stack)
 
 | 구분 | 사용 기술 |
 |---|---|
@@ -65,7 +65,7 @@ sequenceDiagram
 
 ---
 
-## ⚡ 트러블슈팅 및 환경 최적화 (Problem Solving)
+##  트러블슈팅 및 환경 최적화 (Problem Solving)
 
 > **Apple Silicon (M2 Mac) x86_64 에뮬레이션 블록킹 문제 해결**
 > - **문제 상황**: 기존 x86_64 기반 `bcgov/von-image` 실행 시, QEMU/Rosetta 에뮬레이션 환경에서 Indy Plenum consensus 이벤트 루프가 교착 상태(Freeze)에 빠져 노드 간 통신이 중단되는 문제 발생.
@@ -74,7 +74,7 @@ sequenceDiagram
 
 ---
 
-## 🚀 실행 가이드 (Quick Start)
+##  실행 가이드 (Quick Start)
 
 ### 사전 조건 (Prerequisites)
 - Docker Desktop 실행 (`von-network` 가 구동 중이어야 함)
@@ -99,7 +99,7 @@ cd YOUR_REPOSITORY
 
 ---
 
-## 📂 파일 구조 (Directory Structure)
+##  파일 구조 (Directory Structure)
 
 ```text
 ├── 1_issuer_schema_cred_def.py   # Step 1: 스키마 및 CredDef 온체인 등록 스크립트
