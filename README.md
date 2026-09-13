@@ -81,8 +81,8 @@ sequenceDiagram
 
 ### 1단계: 저장소 클론
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-cd YOUR_REPOSITORY
+git clone https://github.com/Andrewpark-hub/indy-did-credential-demo.git
+cd indy-did-credential-demo
 ```
 
 ### 2단계: 실습 파이프라인 단계를 순서대로 실행
@@ -108,4 +108,121 @@ cd YOUR_REPOSITORY
 ├── pool_transactions_genesis      # 로컬 노드 연결 제네시스 트랜잭션 파일
 ├── run.sh                         # 도커 컨테이너 기반 실습 통합 실행 파이프라인
 └── .idea/runConfigurations/       # 파이Charm원클릭 실행 구성 설정을 위한 메타데이터
+```
+
+---
+---
+
+# 🔗 Self-Sovereign Identity (SSI) Credential System on Hyperledger Indy — DID / VC / VP
+
+*English version — the Korean original is above.*
+
+![Python](https://img.shields.io/badge/Python-3.6%2B-blue?style=flat-square&logo=python)
+![Hyperledger Indy](https://img.shields.io/badge/Hyperledger-Indy-orange?style=flat-square)
+![Docker](https://img.shields.io/badge/Docker-ARM64%20Native-2496ED?style=flat-square&logo=docker)
+![Architecture](https://img.shields.io/badge/Architecture-SSI%20%2F%20DID%20%2F%20VC%20%2F%20VP-green?style=flat-square)
+
+A project that implements the full **Self-Sovereign Identity (SSI)** lifecycle on a Hyperledger Indy blockchain network (`von-network`): creating a **DID (Decentralized Identifier)**, issuing a **VC (Verifiable Credential)**, and verifying a **VP (Verifiable Presentation)** through zero-knowledge proof (ZKP).
+
+---
+
+## 📌 Key Components
+
+1. **On-chain Trust Anchor registration and transaction verification**
+   - Registers the Issuer DID on the ledger using Steward (network administrator) privileges
+   - Writes the **Schema** and **Credential Definition (CredDef)** — the structural definition of a credential — permanently onto the blockchain
+2. **Privacy-preserving VC issuance**
+   - Binds the Holder's unique **Master Secret** into the credential, blocking impersonation by anyone else
+   - Receives and stores the credential in an encrypted local wallet
+3. **ZKP-based VP verification**
+   - **Selective disclosure**: only the minimum attributes required by the Verifier's Proof Request are revealed
+   - Cryptographic signature verification against the on-chain public keys, without ever exposing the original VC or a private key
+
+---
+
+## 🔄 System Architecture & Lifecycle Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Issuer as Issuer (University)
+    actor Holder as Holder (Student)
+    actor Verifier as Verifier (Company)
+    participant Ledger as Blockchain Ledger (von-network)
+
+    Note over Issuer, Ledger: [Step 1] Register Schema & CredDef on-chain (1_issuer_schema_cred_def.py)
+    Issuer->>Ledger: Register Issuer DID (Trust Anchor) with Steward privileges
+    Issuer->>Ledger: Register the degree Schema (DegreeSchema)
+    Issuer->>Ledger: Register the Credential Definition (CredDef), including crypto keys
+
+    Note over Issuer, Holder: [Step 2] Issue the VC & store it in the wallet (2_issue_credential.py)
+    Issuer->>Holder: Send a Credential Offer
+    Holder->>Issuer: Send a Credential Request bound to the Master Secret
+    Issuer->>Holder: Issue the cryptographically signed VC (Verifiable Credential)
+    Holder->>Holder: Store the VC in the encrypted local wallet (test-wallet)
+
+    Note over Holder, Verifier: [Step 3] Present the VP and verify it on-chain (3_verify_presentation.py)
+    Verifier->>Holder: Send a Proof Request (required attributes: name, major)
+    Holder->>Holder: Build a VP (Proof) from the wallet, extracting only the required data
+    Holder->>Verifier: Submit the ZKP-based VP (Verifiable Presentation)
+    Verifier->>Ledger: Look up the on-chain Schema & CredDef public keys
+    Verifier->>Verifier: Mathematically verify the VP signature (Result: True)
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|---|---|
+| **Ledger Network** | Hyperledger Indy, `von-network` (4-node BFT consensus) |
+| **SDK & Core** | Python 3, `python3-indy`, `indy-vdr` |
+| **Crypto & Storage** | Zero-Knowledge Proof (ZKP), Libsodium, RocksDB |
+| **Container & OS** | Docker Desktop, Apple Silicon (M2, ARM64-native containerization) |
+
+---
+
+## ⚡ Troubleshooting & Environment Optimization
+
+> **Resolving an x86_64 emulation deadlock on Apple Silicon (M2 Mac)**
+> - **Problem**: Running the existing x86_64-based `bcgov/von-image` under QEMU/Rosetta emulation caused the Indy Plenum consensus event loop to freeze, cutting off communication between nodes.
+> - **Root cause**: I traced it to 64-bit message signals being dropped by the x86_64 emulation layer during low-level C/Python `epoll` and ZMQ socket communication.
+> - **Fix**: Replaced the Dockerfile base image with the Apple Silicon-native `snel/von-image:node-1.12-4-arm64` and rebuilt the `indy_vdr~=0.4.0` arm64 wheel dependencies, so the stack now runs **100% ARM64-native on the M2 chipset** with no emulation layer.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Docker Desktop running (`von-network` must be up)
+
+### Step 1: Clone the repository
+```bash
+git clone https://github.com/Andrewpark-hub/indy-did-credential-demo.git
+cd indy-did-credential-demo
+```
+
+### Step 2: Run the pipeline stages in order
+```bash
+# Step 1: Register the Issuer Schema and CredDef on the ledger
+./run.sh 1
+
+# Step 2: Issue the Holder's VC and store it in the encrypted wallet
+./run.sh 2
+
+# Step 3: Submit the Verifier's VP and verify it on-chain with ZKP
+./run.sh 3
+```
+
+---
+
+## 📂 Directory Structure
+
+```text
+├── 1_issuer_schema_cred_def.py   # Step 1: Registers the Schema and CredDef on-chain
+├── 2_issue_credential.py          # Step 2: Issues the VC and stores it in the wallet
+├── 3_verify_presentation.py       # Step 3: Submits the VP and verifies the zero-knowledge proof
+├── pool_transactions_genesis      # Genesis transaction file for connecting to the local nodes
+├── run.sh                         # Unified pipeline runner on top of Docker containers
+└── .idea/runConfigurations/       # PyCharm one-click run configuration metadata
 ```
