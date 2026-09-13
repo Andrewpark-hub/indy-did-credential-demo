@@ -113,7 +113,7 @@ cd indy-did-credential-demo
 ---
 ---
 
-# 🔗 Self-Sovereign Identity (SSI) Credential System on Hyperledger Indy — DID / VC / VP
+# Self-Sovereign Identity (SSI) Credential System on Hyperledger Indy — DID / VC / VP
 
 *English version — the Korean original is above.*
 
@@ -126,7 +126,7 @@ A project that implements the full **Self-Sovereign Identity (SSI)** lifecycle o
 
 ---
 
-## 📌 Key Components
+## Key Components
 
 1. **On-chain Trust Anchor registration and transaction verification**
    - Registers the Issuer DID on the ledger using Steward (network administrator) privileges
@@ -140,7 +140,7 @@ A project that implements the full **Self-Sovereign Identity (SSI)** lifecycle o
 
 ---
 
-## 🔄 System Architecture & Lifecycle Flow
+## System Architecture & Lifecycle Flow
 
 ```mermaid
 sequenceDiagram
@@ -171,7 +171,7 @@ sequenceDiagram
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Category | Technology |
 |---|---|
@@ -182,7 +182,7 @@ sequenceDiagram
 
 ---
 
-## ⚡ Troubleshooting & Environment Optimization
+## Troubleshooting & Environment Optimization
 
 > **Resolving an x86_64 emulation deadlock on Apple Silicon (M2 Mac)**
 > - **Problem**: Running the existing x86_64-based `bcgov/von-image` under QEMU/Rosetta emulation caused the Indy Plenum consensus event loop to freeze, cutting off communication between nodes.
@@ -216,7 +216,7 @@ cd indy-did-credential-demo
 
 ---
 
-## 📂 Directory Structure
+## Directory Structure
 
 ```text
 ├── 1_issuer_schema_cred_def.py   # Step 1: Registers the Schema and CredDef on-chain
